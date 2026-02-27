@@ -30,7 +30,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                         {isKidsMode ? 'Back to Adult Mode' : (
                             <>
                                 <span>🧸</span>
-                                <span className="pastel-rainbow-text desktop-text">Page for a 5 year old</span>
+                                <span className="pastel-rainbow-text desktop-text">Explain like I'm 5</span>
                                 <span className="pastel-rainbow-text mobile-text">Kids mode</span>
                             </>
                         )}
