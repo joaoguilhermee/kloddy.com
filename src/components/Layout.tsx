@@ -27,7 +27,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 )}
                 <div className="nav-cta">
                     <button style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--surface)', color: 'var(--ink)', padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--border)', cursor: 'pointer', fontFamily: "'Rajdhani', sans-serif", fontWeight: '600' }} onClick={toggleKidsMode}>
-                        {isKidsMode ? 'Back to Adult Mode' : (
+                        {isKidsMode ? 'Go back' : (
                             <>
                                 <span>🧸</span>
                                 <span className="pastel-rainbow-text desktop-text">Explain like I'm 5</span>

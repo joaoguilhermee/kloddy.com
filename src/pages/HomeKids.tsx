@@ -12,6 +12,10 @@ export default function HomeKids() {
                     This is a magic toy box that remembers all the <span className="has-tooltip" data-tooltip="Prompts">fun stories</span> you create to play with <span className="has-tooltip" data-tooltip="AI tools">your toys</span>!
                 </p>
 
+                <a href="https://app.kloddy.com" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface)', padding: '16px 32px', borderRadius: '12px', border: '2px solid var(--border)', cursor: 'pointer', fontFamily: "'Rajdhani', sans-serif", fontWeight: '700', fontSize: '1.5rem', marginBottom: '60px', boxShadow: '0 8px 24px rgba(0,0,0,0.2)', transition: 'transform 0.2s ease' }} onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+                    <span className="pastel-rainbow-text">Start now save your story 🚀</span>
+                </a>
+
                 <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '20px', maxWidth: '1000px', margin: '0 auto', width: '100%', padding: '0 20px' }}>
                     <div style={{ flex: '1 1 280px', maxWidth: '300px', background: 'var(--surface)', padding: '30px', borderRadius: '16px', border: '1px solid var(--border)' }}>
                         <div style={{ fontSize: '3rem', marginBottom: '10px' }}>📦</div>
@@ -40,7 +44,7 @@ export default function HomeKids() {
                     <div style={{ flex: '1 1 280px', maxWidth: '300px', background: 'var(--surface)', padding: '30px', borderRadius: '16px', border: '1px solid var(--border)' }}>
                         <div style={{ fontSize: '3rem', marginBottom: '10px' }}>🏰</div>
                         <h3 style={{ fontSize: '1.5rem', marginBottom: '10px', color: 'var(--ink)' }}>Safe Place!</h3>
-                        <p style={{ color: 'var(--ink-muted)', fontSize: '1.1rem' }}>A super safe castle that keeps all your fun stories safe from any sneaky monsters! 👾</p>
+                        <p style={{ color: 'var(--ink-muted)', fontSize: '1.1rem' }}>A super safe place that keeps all your fun stories safe from any sneaky monsters! 👾</p>
                     </div>
                 </div>
             </section>

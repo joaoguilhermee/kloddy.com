@@ -13,6 +13,7 @@ export const KidsModeProvider: React.FC<{ children: ReactNode }> = ({ children }
 
     const toggleKidsMode = () => {
         setIsKidsMode((prev) => !prev);
+        window.scrollTo({ top: 0, behavior: 'instant' });
     };
 
     return (
