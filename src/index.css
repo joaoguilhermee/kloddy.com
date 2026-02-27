@@ -1387,6 +1387,10 @@ footer {
   transition-delay: 0.24s
 }
 
+.mobile-text {
+  display: none;
+}
+
 @media(max-width:900px) {
   nav {
     padding: 0 20px
@@ -1421,6 +1425,14 @@ footer {
     flex-direction: column;
     gap: 16px;
     text-align: center
+  }
+
+  .desktop-text {
+    display: none;
+  }
+
+  .mobile-text {
+    display: inline;
   }
 }
 
@@ -1493,4 +1505,10 @@ footer {
 .has-tooltip:hover::before {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
+}
+
+@media (max-width: 420px) {
+  .logo-text {
+    display: none;
+  }
 }
