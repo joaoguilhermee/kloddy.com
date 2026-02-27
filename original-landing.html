@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kloddy — Prompt Engineering Infrastructure</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #09090b;
+      --surface: #111115;
+      --border: #1e1e26;
+      --border-hi: #2e2e3e;
+      --ink: #f0f0f5;
+      --ink-muted: #6b6b80;
+      --ink-dim: #3a3a50;
+      --accent: #f97316;
+      --accent-glow: rgba(249, 115, 22, 0.15);
+      --green: #34d399;
+      --amber: #fbbf24;
+      --red: #f87171;
+      --blue: #60a5fa;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 64px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(9, 9, 11, 0.75);
+      backdrop-filter: blur(20px);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .logo img {
+      height: 30px;
+      width: 30px;
+      object-fit: contain;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--ink-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--ink);
+    }
+
+    .nav-cta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border-hi);
+      color: var(--ink-muted);
+      padding: 7px 16px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'Rajdhani', sans-serif;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--ink);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'Rajdhani', sans-serif;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: #fb923c;
+      box-shadow: 0 0 36px rgba(249, 115, 22, 0.45);
+      transform: translateY(-1px);
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 130px 24px 80px;
+      position: relative;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .hero-video-container {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .hero-video-container::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('fallback.png') center/cover no-repeat;
+      filter: grayscale(100%);
+      z-index: -1;
+    }
+
+    .hero-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(100%);
+      opacity: 1;
+      /* Video is now behind a black layer, so keep full opacity */
+    }
+
+    .hero-video-darken {
+      position: absolute;
+      inset: 0;
+      background: #000;
+      opacity: 0.8;
+      z-index: 1;
+    }
+
+    .hero-video-overlay {
+      position: absolute;
+      inset: 0;
+      background: var(--accent);
+      mix-blend-mode: color;
+      opacity: 0.3;
+      /* Slightly reduced for a smoother blend with the black layer */
+      z-index: 2;
+    }
+
+    /* Accessibility: Handle reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .hero-video {
+        display: none;
+      }
+
+      .hero-video-darken {
+        opacity: 0.95;
+      }
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 700px;
+      background: radial-gradient(ellipse at center, rgba(249, 115, 22, 0.09) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(ellipse at 50% 25%, black 0%, transparent 68%);
+      -webkit-mask-image: radial-gradient(ellipse at 50% 25%, black 0%, transparent 68%);
+      opacity: 0.5;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(249, 115, 22, 0.3);
+      background: rgba(249, 115, 22, 0.07);
+      padding: 5px 16px 5px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: 'DM Mono', monospace;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 40px;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: 0.35
+      }
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .hero h1 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(52px, 8.5vw, 108px);
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      max-width: 960px;
+      animation: fadeUp 0.9s ease 0.1s both;
+    }
+
+    .hero h1 .accent {
+      color: var(--accent);
+      display: block;
+    }
+
+    .hero-sub {
+      font-size: 19px;
+      font-weight: 500;
+      color: rgba(240, 240, 245, 0.95);
+      max-width: 580px;
+      margin-top: 28px;
+      line-height: 1.65;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+      animation: fadeUp 0.9s ease 0.25s both;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 44px;
+      animation: fadeUp 0.9s ease 0.4s both;
+    }
+
+    .btn-lg {
+      padding: 14px 32px;
+      font-size: 14px;
+      border-radius: 6px;
+      letter-spacing: 0.08em;
+    }
+
+    /* ─── TERMINAL ─── */
+    .terminal-wrap {
+      position: relative;
+      margin-top: 80px;
+      width: 100%;
+      max-width: 780px;
+      animation: fadeUp 0.9s ease 0.5s both;
+    }
+
+    .terminal {
+      background: var(--surface);
+      border: 1px solid var(--border-hi);
+      border-radius: 12px;
+      overflow: hidden;
+      text-align: left;
+      box-shadow:
+        0 0 0 1px rgba(249, 115, 22, 0.06),
+        0 40px 80px rgba(0, 0, 0, 0.65),
+        0 0 80px rgba(249, 115, 22, 0.06);
+    }
+
+    .terminal-bar {
+      background: #16161c;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .t-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .t-red {
+      background: #ff5f57
+    }
+
+    .t-yellow {
+      background: #febc2e
+    }
+
+    .t-green {
+      background: #28c840
+    }
+
+    .terminal-title {
+      margin-left: auto;
+      margin-right: auto;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--ink-dim);
+      letter-spacing: 0.05em;
+    }
+
+    .terminal-body {
+      padding: 24px;
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      line-height: 1.85;
+    }
+
+    .t-line {
+      display: flex;
+      gap: 12px;
+    }
+
+    .t-prompt {
+      color: var(--accent);
+      user-select: none;
+    }
+
+    .t-cmd {
+      color: var(--ink);
+    }
+
+    .t-out {
+      color: var(--ink-muted);
+      padding-left: 22px;
+    }
+
+    .t-key {
+      color: var(--blue);
+    }
+
+    .t-val {
+      color: var(--green);
+    }
+
+    .t-num {
+      color: var(--amber);
+    }
+
+    .t-tag {
+      color: var(--accent);
+    }
+
+    .t-comment {
+      color: var(--ink-dim);
+    }
+
+    .t-blank {
+      height: 8px;
+    }
+
+    /* ─── SECTIONS ─── */
+    section {
+      padding: 120px 24px;
+    }
+
+    .container {
+      max-width: 1160px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .section-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 700;
+      line-height: 0.97;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      max-width: 720px;
+    }
+
+    .section-title .accent {
+      color: var(--accent);
+    }
+
+    .section-desc {
+      color: var(--ink-muted);
+      font-size: 17px;
+      line-height: 1.7;
+      max-width: 500px;
+      margin-top: 20px;
+      font-weight: 400;
+    }
+
+    /* ─── FEATURES ─── */
+    .features {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding-bottom: 0;
+    }
+
+    .features-intro {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: end;
+      margin-bottom: 64px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--border);
+    }
+
+    .feat {
+      padding: 40px 32px;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+
+    .feat:nth-child(3n) {
+      border-right: none;
+    }
+
+    .feat:hover {
+      background: rgba(249, 115, 22, 0.025);
+    }
+
+    .feat::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .feat:hover::after {
+      opacity: 1;
+    }
+
+    .feat-icon {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+
+    .feat-num {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10.5px;
+      color: var(--ink-dim);
+    }
+
+    .feat-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .feat-text {
+      font-size: 14px;
+      color: var(--ink-muted);
+      line-height: 1.6;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 16px;
+    }
+
+    .chip {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 3px;
+      border: 1px solid var(--border-hi);
+      color: var(--ink-muted);
+    }
+
+    .chip-o {
+      border-color: rgba(249, 115, 22, 0.3);
+      color: var(--accent);
+    }
+
+    .chip-g {
+      border-color: rgba(52, 211, 153, 0.3);
+      color: var(--green);
+    }
+
+    .chip-a {
+      border-color: rgba(251, 191, 36, 0.3);
+      color: var(--amber);
+    }
+
+    /* ─── EVAL SECTION ─── */
+    .eval-section {
+      border-top: 1px solid var(--border);
+      background: linear-gradient(180deg, var(--bg) 0%, #0d0d14 100%);
+    }
+
+    .eval-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+      align-items: start;
+      margin-top: 72px;
+    }
+
+    .eval-card {
+      background: var(--surface);
+      border: 1px solid var(--border-hi);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.04), 0 30px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .eval-card-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .eval-card-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .model-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      padding: 3px 10px;
+      border-radius: 3px;
+      background: rgba(249, 115, 22, 0.1);
+      color: var(--accent);
+      border: 1px solid rgba(249, 115, 22, 0.2);
+      letter-spacing: 0.04em;
+    }
+
+    .eval-body {
+      padding: 24px;
+    }
+
+    .score-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .score-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .score-lbl {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--ink-muted);
+    }
+
+    .score-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .score-bar-bg {
+      width: 110px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 100px;
+      background: linear-gradient(90deg, var(--accent), #ea580c);
+      transition: width 1.5s ease;
+    }
+
+    .score-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--ink);
+      width: 24px;
+      text-align: right;
+    }
+
+    .pass-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(52, 211, 153, 0.08);
+      border: 1px solid rgba(52, 211, 153, 0.2);
+      color: var(--green);
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      padding: 5px 12px;
+      border-radius: 3px;
+      margin-top: 20px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .pass-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .cost-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .cost-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .cost-lbl {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--ink-dim);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 7px;
+    }
+
+    .cost-val {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1;
+    }
+
+    .cost-unit {
+      font-size: 11px;
+      color: var(--ink-muted);
+      margin-top: 3px;
+      font-family: 'DM Mono', monospace;
+    }
+
+    /* ─── DIFF ─── */
+    .diff-card {
+      background: var(--surface);
+      border: 1px solid var(--border-hi);
+      border-radius: 10px;
+      padding: 22px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12.5px;
+      line-height: 1.9;
+      margin-bottom: 20px;
+    }
+
+    .diff-header {
+      font-size: 10px;
+      color: var(--ink-dim);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .diff-line {
+      display: flex;
+      gap: 10px;
+      border-radius: 3px;
+      padding: 1px 6px;
+    }
+
+    .diff-line.rem {
+      background: rgba(248, 113, 113, 0.07);
+    }
+
+    .diff-line.add {
+      background: rgba(52, 211, 153, 0.07);
+    }
+
+    .diff-g {
+      color: var(--ink-dim);
+      user-select: none;
+      width: 14px;
+    }
+
+    .diff-g.minus {
+      color: var(--red);
+    }
+
+    .diff-g.plus {
+      color: var(--green);
+    }
+
+    .diff-txt {
+      color: var(--ink-muted);
+    }
+
+    .diff-line.rem .diff-txt {
+      color: var(--red);
+      opacity: 0.85;
+    }
+
+    .diff-line.add .diff-txt {
+      color: var(--green);
+      opacity: 0.85;
+    }
+
+    .var-block {
+      background: var(--bg);
+      border: 1px solid var(--border-hi);
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      line-height: 1.9;
+      margin-top: 16px;
+    }
+
+    /* ─── BENCH ─── */
+    .bench-section {
+      border-top: 1px solid var(--border);
+      background: #0c0c12;
+    }
+
+    .bench-table {
+      border: 1px solid var(--border-hi);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--surface);
+      margin-top: 56px;
+    }
+
+    .bench-thead {
+      display: grid;
+      grid-template-columns: 2.2fr 1.3fr 1.3fr 1.1fr 1.1fr;
+      padding: 12px 28px;
+      border-bottom: 1px solid var(--border);
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--ink-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .bench-row {
+      display: grid;
+      grid-template-columns: 2.2fr 1.3fr 1.3fr 1.1fr 1.1fr;
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      transition: background 0.2s;
+    }
+
+    .bench-row:last-child {
+      border-bottom: none;
+    }
+
+    .bench-row:hover {
+      background: rgba(249, 115, 22, 0.025);
+    }
+
+    .bench-name {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .bench-name small {
+      display: block;
+      font-size: 10.5px;
+      color: var(--ink-muted);
+      font-family: 'DM Mono', monospace;
+      font-weight: 400;
+      margin-top: 2px;
+    }
+
+    .bench-score {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+    }
+
+    .mini-bar {
+      width: 50px;
+      height: 3px;
+      background: var(--border);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+
+    .mini-fill {
+      height: 100%;
+      border-radius: 100px;
+      background: linear-gradient(90deg, var(--accent), #ea580c);
+    }
+
+    .verdict {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      padding: 3px 9px;
+      border-radius: 3px;
+      letter-spacing: 0.04em;
+    }
+
+    .v-win {
+      background: rgba(52, 211, 153, 0.08);
+      color: var(--green);
+      border: 1px solid rgba(52, 211, 153, 0.2);
+    }
+
+    .v-tie {
+      background: rgba(251, 191, 36, 0.08);
+      color: var(--amber);
+      border: 1px solid rgba(251, 191, 36, 0.2);
+    }
+
+    .v-none {
+      background: rgba(107, 107, 128, 0.08);
+      color: var(--ink-muted);
+      border: 1px solid var(--border);
+    }
+
+    /* ─── AUDIT ─── */
+    .audit-section {
+      border-top: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    .audit-feed {
+      background: var(--surface);
+      border: 1px solid var(--border-hi);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 56px;
+      box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.04), 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .audit-feed-header {
+      padding: 15px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .audit-feed-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .audit-tabs {
+      display: flex;
+      gap: 4px;
+    }
+
+    .audit-tab {
+      padding: 5px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--ink-muted);
+      font-family: 'DM Mono', monospace;
+    }
+
+    .audit-tab.active {
+      background: rgba(249, 115, 22, 0.1);
+      color: var(--accent);
+    }
+
+    .audit-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+
+    .audit-item:last-child {
+      border-bottom: none;
+    }
+
+    .audit-item:hover {
+      background: rgba(249, 115, 22, 0.02);
+    }
+
+    .audit-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+
+    .audit-dot.pub {
+      background: var(--green);
+      box-shadow: 0 0 5px var(--green);
+    }
+
+    .audit-dot.draft {
+      background: var(--ink-dim);
+    }
+
+    .audit-dot.mem {
+      background: var(--accent);
+    }
+
+    .audit-content {
+      flex: 1;
+    }
+
+    .audit-action {
+      font-size: 13.5px;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .audit-action b {
+      color: var(--accent);
+    }
+
+    .audit-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .audit-time,
+    .audit-user {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--ink-dim);
+    }
+
+    .audit-diff {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--accent);
+      opacity: 0.7;
+      cursor: pointer;
+    }
+
+    .audit-diff:hover {
+      opacity: 1;
+    }
+
+    /* ─── CTA ─── */
+    .cta-section {
+      border-top: 1px solid var(--border);
+      background: var(--bg);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-glow {
+      position: absolute;
+      bottom: -80px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 500px;
+      background: radial-gradient(ellipse at bottom, rgba(249, 115, 22, 0.12) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .cta-card {
+      border: 1px solid var(--border-hi);
+      border-radius: 16px;
+      padding: 80px 64px;
+      background: linear-gradient(145deg, #111118, #0d0d12);
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+      box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.06), 0 40px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(249, 115, 22, 0.07);
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 10.5px;
+      color: var(--accent);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .cta-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(40px, 6vw, 76px);
+      font-weight: 700;
+      line-height: 0.93;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .cta-title .accent {
+      color: var(--accent);
+    }
+
+    .cta-sub {
+      color: var(--ink-muted);
+      font-size: 16px;
+      max-width: 440px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    .cta-btns {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .cta-fine {
+      margin-top: 28px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10.5px;
+      color: var(--ink-dim);
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 36px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-copy {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--ink-dim);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-dim);
+      text-decoration: none;
+      font-family: 'Rajdhani', sans-serif;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--ink-muted);
+    }
+
+    /* ─── MODAL ─── */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(9, 9, 11, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: var(--surface);
+      border: 1px solid var(--border-hi);
+      border-radius: 16px;
+      max-width: 700px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 48px;
+      position: relative;
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(249, 115, 22, 0.08);
+      transform: translateY(20px) scale(0.98);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+      opacity: 0;
+    }
+
+    .modal-backdrop.open .modal-content {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--ink-muted);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      background: rgba(249, 115, 22, 0.1);
+      color: var(--accent);
+      border-color: rgba(249, 115, 22, 0.3);
+    }
+
+    .modal-header {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      margin-bottom: 16px;
+      line-height: 1.1;
+    }
+
+    .modal-sub {
+      color: var(--ink-muted);
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .modal-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 32px 0;
+      width: 100%;
+    }
+
+    .modal-section {
+      margin-bottom: 32px;
+    }
+
+    .modal-section h3 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--ink);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-section h3 .num {
+      color: var(--accent);
+      font-family: 'DM Mono', monospace;
+      font-size: 14px;
+    }
+
+    .modal-section p {
+      color: var(--ink-muted);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .modal-section ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 16px 0;
+    }
+
+    .modal-section li {
+      position: relative;
+      padding-left: 20px;
+      color: var(--ink-muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .modal-section li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+    }
+
+    .modal-section strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .modal-section code {
+      background: rgba(249, 115, 22, 0.1);
+      color: var(--accent);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+    }
+
+    .modal-footer-cta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-top: 48px;
+    }
+
+    .modal-footer-cta strong {
+      font-size: 18px;
+      color: var(--ink);
+      margin-bottom: 24px;
+      display: block;
+    }
+
+    /* ─── REVEAL ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .d1 {
+      transition-delay: 0.08s
+    }
+
+    .d2 {
+      transition-delay: 0.16s
+    }
+
+    .d3 {
+      transition-delay: 0.24s
+    }
+
+    @media(max-width:900px) {
+      nav {
+        padding: 0 20px
+      }
+
+      .nav-links {
+        display: none
+      }
+
+      .features-intro,
+      .eval-layout {
+        grid-template-columns: 1fr
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr
+      }
+
+      .bench-thead,
+      .bench-row {
+        grid-template-columns: 2fr 1fr 1fr
+      }
+
+      .bench-thead>*:nth-child(3),
+      .bench-row>*:nth-child(3),
+      .bench-thead>*:nth-child(5),
+      .bench-row>*:nth-child(5) {
+        display: none
+      }
+
+      footer {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="logo">
+      <img src="kloddy-dark.png" alt="Kloddy">
+      Kloddy
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#eval">Evaluation</a></li>
+      <li><a href="#bench">Benchmarking</a></li>
+      <li><a href="#governance">Governance</a></li>
+    </ul>
+    <div class="nav-cta">
+      <!-- <a href="#" class="btn-ghost">Sign in</a> -->
+      <a href="https://app.kloddy.com" class="btn-primary">Get started free</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-video-container" aria-hidden="true" tabindex="-1">
+      <video id="hero-video" class="hero-video" poster="fallback.png" autoplay muted playsinline>
+        <source src="background.mov" type="video/quicktime">
+        <source src="background.mov" type="video/mp4">
+        <!-- Fallback message for older browsers -->
+        Your browser does not support the video tag.
+      </video>
+      <div class="hero-video-darken"></div>
+      <div class="hero-video-overlay"></div>
+    </div>
+    <div class="hero-glow"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-badge"><span class="badge-dot"></span>The professional standard for AI mastery</div>
+    <h1>Master your AI.<br><span class="accent">Command with precision.</span></h1>
+    <p class="hero-sub">Stop guessing and start guaranteeing. Kloddy gives forward-thinking builders the structure,
+      safety, and
+      clarity to turn random chats into reliable, high-quality results.</p>
+    <div class="hero-actions">
+      <a href="https://app.kloddy.com" class="btn-primary btn-lg">Create your first organization →</a>
+    </div>
+
+    <div class="terminal-wrap">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="t-dot t-red"></div>
+          <div class="t-dot t-yellow"></div>
+          <div class="t-dot t-green"></div>
+          <span class="terminal-title">kloddy · email-assistant · judge: claude-sonnet-4</span>
+        </div>
+        <div class="terminal-body">
+          <div class="t-line"><span class="t-comment">## Running evaluation against custom criteria</span></div>
+          <div class="t-blank"></div>
+          <div class="t-line"><span class="t-prompt">▸</span><span class="t-cmd"> judge <span
+                class="t-tag">claude-sonnet-4</span> run <span class="t-key">email-assistant</span>@v4</span></div>
+          <div class="t-blank"></div>
+          <div class="t-line"><span class="t-out">accuracy <span class="t-val">94/100</span> ████████████░░ +8 from
+              v3</span></div>
+          <div class="t-line"><span class="t-out">completeness <span class="t-val">91/100</span> ███████████░░░ +3 from
+              v3</span></div>
+          <div class="t-line"><span class="t-out">formatting <span class="t-val">98/100</span> █████████████░ +1 from
+              v3</span></div>
+          <div class="t-line"><span class="t-out">safety <span class="t-val">100/100</span> ██████████████ ✓ pass</span>
+          </div>
+          <div class="t-blank"></div>
+          <div class="t-line"><span class="t-out">critical_failures: <span class="t-val">0</span> threshold: <span
+                class="t-num">88</span> verdict: <span class="t-val">✓ PASS</span></span></div>
+          <div class="t-blank"></div>
+          <div class="t-line"><span class="t-prompt">▸</span><span class="t-cmd"> publish <span
+                class="t-key">email-assistant</span>@v4 --changelog <span class="t-val">"Improved tone, added length
+                constraint"</span></span></div>
+          <div class="t-line"><span class="t-out">✓ Published cost: <span class="t-num">$0.0023</span> latency: <span
+                class="t-num">1.2s</span> tokens: <span class="t-num">1,847</span></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="features-intro">
+        <div>
+          <div class="section-label reveal">Prompt asset management</div>
+          <h2 class="section-title reveal">Never lose a<br>great <span class="accent">prompt</span> again</h2>
+        </div>
+        <p class="section-desc reveal" style="margin-top:0">Move away from messy chat histories and lost notes. Kloddy
+          treats your ideas as valuable assets that grow and improve over time.</p>
+      </div>
+    </div>
+    <div class="container" style="max-width:100%;padding:0">
+      <div class="features-grid">
+        <div class="feat reveal"><span class="feat-num">01</span>
+          <div class="feat-icon">🗂️</div>
+          <div class="feat-title">Organized Workspaces</div>
+          <div class="feat-text">Group your prompts into clear "Features" within different "Organizations" so you can
+            find exactly what you need in seconds.</div>
+          <div class="chips"><span class="chip chip-o">Organizations</span><span class="chip">Features</span><span
+              class="chip">Prompts</span></div>
+        </div>
+        <div class="feat reveal d1"><span class="feat-num">02</span>
+          <div class="feat-icon">🔖</div>
+          <div class="feat-title">Full Version History</div>
+          <div class="feat-text">Every change you make is saved with a note on what was updated — in an immutable,
+            always-accessible history.</div>
+          <div class="chips"><span class="chip chip-o">Immutable log</span><span class="chip">Changelogs</span></div>
+        </div>
+        <div class="feat reveal d2"><span class="feat-num">03</span>
+          <div class="feat-icon">↩️</div>
+          <div class="feat-title">Instant Rollback</div>
+          <div class="feat-text">If a new change doesn't work out, restore a previous version with a single click. No
+            stress, no data loss.</div>
+          <div class="chips"><span class="chip chip-g">One-click restore</span><span class="chip">Safe edits</span>
+          </div>
+        </div>
+        <div class="feat reveal"><span class="feat-num">04</span>
+          <div class="feat-icon">⚡</div>
+          <div class="feat-title">Side-by-Side Diffs</div>
+          <div class="feat-text">Easily see the exact text changes between any two versions of your work — character by
+            character clarity.</div>
+          <div class="chips"><span class="chip">v2 vs v3</span><span class="chip chip-o">Char-level diff</span></div>
+        </div>
+        <div class="feat reveal d1"><span class="feat-num">05</span>
+          <div class="feat-icon">🧩</div>
+          <div class="feat-title">Dynamic Templates</div>
+          <div class="feat-text">Use {{variable}} syntax to build flexible prompts that handle different inputs without
+            rewriting core instructions.</div>
+          <div class="chips"><span class="chip chip-g">Variables</span><span class="chip">Reusable</span><span
+              class="chip">Flexible</span></div>
+        </div>
+        <div class="feat reveal d2"><span class="feat-num">06</span>
+          <div class="feat-icon">🔍</div>
+          <div class="feat-title">Always Retrievable</div>
+          <div class="feat-text">Your best prompts never get buried in a chat window again. Every asset is searchable,
+            organized, and owned by your team.</div>
+          <div class="chips"><span class="chip chip-a">Search</span><span class="chip">Owned assets</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EVAL -->
+  <section class="eval-section" id="eval">
+    <div class="container">
+      <div class="section-label reveal">The judge in your corner</div>
+      <h2 class="section-title reveal">Why settle for<br><span class="accent">"good enough"?</span></h2>
+      <p class="section-desc reveal">Kloddy uses advanced AI to evaluate your results based on your personal rules.
+        Define what success looks like — then verify it automatically.</p>
+
+      <div class="eval-layout">
+        <div class="reveal">
+          <div class="eval-card">
+            <div class="eval-card-header">
+              <div class="eval-card-title">🧑‍⚖️ Evaluation Report</div>
+              <span class="model-tag">claude-sonnet-4</span>
+            </div>
+            <div class="eval-body">
+              <div
+                style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink-dim);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:18px">
+                Scoring Pillars</div>
+              <div class="score-row"><span class="score-lbl">Accuracy</span>
+                <div class="score-right">
+                  <div class="score-bar-bg">
+                    <div class="score-bar-fill" style="width:94%"></div>
+                  </div><span class="score-num">94</span>
+                </div>
+              </div>
+              <div class="score-row"><span class="score-lbl">Completeness</span>
+                <div class="score-right">
+                  <div class="score-bar-bg">
+                    <div class="score-bar-fill" style="width:88%"></div>
+                  </div><span class="score-num">88</span>
+                </div>
+              </div>
+              <div class="score-row"><span class="score-lbl">Formatting</span>
+                <div class="score-right">
+                  <div class="score-bar-bg">
+                    <div class="score-bar-fill" style="width:97%"></div>
+                  </div><span class="score-num">97</span>
+                </div>
+              </div>
+              <div class="score-row"><span class="score-lbl">Safety</span>
+                <div class="score-right">
+                  <div class="score-bar-bg">
+                    <div class="score-bar-fill" style="width:100%"></div>
+                  </div><span class="score-num">100</span>
+                </div>
+              </div>
+              <div style="border-top:1px solid var(--border);margin-top:18px;padding-top:16px">
+                <div
+                  style="font-size:11px;color:var(--ink-muted);font-family:'DM Mono',monospace;margin-bottom:10px;letter-spacing:0.04em;text-transform:uppercase">
+                  Critical Failure Conditions</div>
+                <div style="font-size:13px;color:var(--ink-muted);line-height:2">
+                  <span style="color:var(--green);margin-right:8px">✓</span> No hallucinated facts detected<br>
+                  <span style="color:var(--green);margin-right:8px">✓</span> Response meets length constraint<br>
+                  <span style="color:var(--green);margin-right:8px">✓</span> Tone matches acceptance criteria
+                </div>
+              </div>
+              <div class="pass-badge"><span class="pass-dot"></span>PASS — All criteria met · threshold 88</div>
+              <div class="cost-cards">
+                <div class="cost-card">
+                  <div class="cost-lbl">Cost</div>
+                  <div class="cost-val">$0.0031</div>
+                  <div class="cost-unit">per run</div>
+                </div>
+                <div class="cost-card">
+                  <div class="cost-lbl">Latency</div>
+                  <div class="cost-val">1.4s</div>
+                  <div class="cost-unit">execution</div>
+                </div>
+                <div class="cost-card">
+                  <div class="cost-lbl">Tokens</div>
+                  <div class="cost-val">2.1k</div>
+                  <div class="cost-unit">total used</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal d1">
+          <div
+            style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px">
+            Detailed reasoning</div>
+          <div style="font-size:15px;color:var(--ink-muted);line-height:1.65;margin-bottom:20px">Don't just get a score
+            —
+            see a step-by-step logic breakdown of why the AI succeeded or failed.</div>
+          <div class="diff-card">
+            <div class="diff-header"><span>📄</span> email-assistant · v3 → v4</div>
+            <div class="diff-line rem"><span class="diff-g minus">-</span><span class="diff-txt">Write a professional
+                email responding to</span></div>
+            <div class="diff-line rem"><span class="diff-g minus">-</span><span class="diff-txt">the customer. Keep it
+                concise.</span></div>
+            <div class="diff-line add"><span class="diff-g plus">+</span><span class="diff-txt">Write a warm but
+                professional email in</span></div>
+            <div class="diff-line add"><span class="diff-g plus">+</span><span class="diff-txt">under {{max_words}}
+                words. Match the</span></div>
+            <div class="diff-line add"><span class="diff-g plus">+</span><span class="diff-txt">customer's tone. Never
+                use jargon.</span></div>
+            <div style="height:8px"></div>
+            <div class="diff-line"><span class="diff-g"> </span><span class="diff-txt"
+                style="color:var(--ink-muted)">Context: {{context}}</span></div>
+            <div class="diff-line rem"><span class="diff-g minus">-</span><span class="diff-txt">Input: {{email}}</span>
+            </div>
+            <div class="diff-line add"><span class="diff-g plus">+</span><span class="diff-txt">Customer email:
+                {{email}}</span></div>
+            <div class="diff-line add"><span class="diff-g plus">+</span><span class="diff-txt">Previous exchanges:
+                {{history}}</span></div>
+          </div>
+          <div class="var-block">
+            <div
+              style="color:var(--ink-dim);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px">
+              // defined variables</div>
+            <div><span style="color:var(--blue)">max_words</span> = <span style="color:var(--amber)">"150"</span></div>
+            <div><span style="color:var(--blue)">context</span> = <span style="color:var(--amber)">"billing
+                dispute"</span></div>
+            <div><span style="color:var(--blue)">email</span> = <span style="color:var(--amber)">"I've been charged
+                twice..."</span></div>
+            <div><span style="color:var(--blue)">history</span> = <span style="color:var(--amber)">"[last 3
+                messages]"</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BENCHMARKING -->
+  <section class="bench-section" id="bench">
+    <div class="container">
+      <div class="section-label reveal">Model benchmarking</div>
+      <h2 class="section-title reveal">Which model gives you<br><span class="accent">the perfect answer?</span></h2>
+      <p class="section-desc reveal">Run your prompt through GPT-4o, Claude, or Gemini simultaneously. Automated
+        verdicts — "No Clear Winner", "Tie", or a decisive champion — based on your criteria.</p>
+      <div class="bench-table reveal">
+        <div class="bench-thead">
+          <div>Prompt / Version</div>
+          <div>Accuracy</div>
+          <div>Completeness</div>
+          <div>Cost/run</div>
+          <div>Verdict</div>
+        </div>
+        <div class="bench-row">
+          <div class="bench-name">email-assistant v4<small>claude-sonnet-4 · 2.1k tokens</small></div>
+          <div class="bench-score">
+            <div class="mini-bar">
+              <div class="mini-fill" style="width:94%"></div>
+            </div><span>94</span>
+          </div>
+          <div class="bench-score">
+            <div class="mini-bar">
+              <div class="mini-fill" style="width:91%"></div>
+            </div><span>91</span>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink-muted)">$0.0023</div>
+          <div><span class="verdict v-win">Winner</span></div>
+        </div>
+        <div class="bench-row">
+          <div class="bench-name">email-assistant v4<small>gpt-4o · 2.3k tokens</small></div>
+          <div class="bench-score">
+            <div class="mini-bar">
+              <div class="mini-fill" style="width:89%"></div>
+            </div><span>89</span>
+          </div>
+          <div class="bench-score">
+            <div class="mini-bar">
+              <div class="mini-fill" style="width:87%"></div>
+            </div><span>87</span>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink-muted)">$0.0041</div>
+          <div><span class="verdict v-none">Challenger</span></div>
+        </div>
+        <div class="bench-row">
+          <div class="bench-name">code-review v2 vs v3<small>claude-sonnet-4 · version compare</small></div>
+          <div class="bench-score">
+            <div class="mini-bar">
+              <div class="mini-fill" style="width:82%"></div>
+            </div><span>82</span>
+          </div>
+          <div class="bench-score">
+            <div class="mini-bar">
+              <div class="mini-fill" style="width:88%"></div>
+            </div><span>88</span>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink-muted)">$0.0018</div>
+          <div><span class="verdict v-tie">Tie</span></div>
+        </div>
+        <div class="bench-row">
+          <div class="bench-name">summarization v5<small>gemini-1.5-pro · 3.4k tokens</small></div>
+          <div class="bench-score">
+            <div class="mini-bar">
+              <div class="mini-fill" style="width:91%"></div>
+            </div><span>91</span>
+          </div>
+          <div class="bench-score">
+            <div class="mini-bar">
+              <div class="mini-fill" style="width:93%"></div>
+            </div><span>93</span>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink-muted)">$0.0031</div>
+          <div><span class="verdict v-win">Winner</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GOVERNANCE -->
+  <section class="audit-section" id="governance">
+    <div class="container">
+      <div class="section-label reveal">Transparency &amp; total control</div>
+      <h2 class="section-title reveal">A behind-the-scenes<br><span class="accent">look at your AI</span></h2>
+      <p class="section-desc reveal">Everything safe, traceable, and cost-effective. Invite others, manage roles, and
+        track who changed what — and when.</p>
+      <div class="audit-feed reveal">
+        <div class="audit-feed-header">
+          <div class="audit-feed-title">Audit Log</div>
+          <div class="audit-tabs">
+            <div class="audit-tab active">All events</div>
+            <div class="audit-tab">Publishes</div>
+            <div class="audit-tab">Members</div>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink-dim)">Last 7 days · 42 events</div>
+        </div>
+        <div class="audit-item">
+          <div class="audit-dot pub"></div>
+          <div class="audit-content">
+            <div class="audit-action">Published <b>email-assistant</b> v4 — <b>"Improved tone, added length
+                constraint"</b></div>
+            <div class="audit-meta"><span class="audit-time">2 min ago</span><span
+                class="audit-user">sarah@acme.com</span><a class="audit-diff">View diff →</a></div>
+          </div>
+        </div>
+        <div class="audit-item">
+          <div class="audit-dot draft"></div>
+          <div class="audit-content">
+            <div class="audit-action">Ran evaluation on <b>code-review</b> v2 · Judge: <b>gpt-4o</b> · Result: PASS
+              (91/100)</div>
+            <div class="audit-meta"><span class="audit-time">18 min ago</span><span
+                class="audit-user">marcus@acme.com</span><a class="audit-diff">View report →</a></div>
+          </div>
+        </div>
+        <div class="audit-item">
+          <div class="audit-dot draft"></div>
+          <div class="audit-content">
+            <div class="audit-action">Saved draft <b>customer-support</b> v6 with 3 variable changes</div>
+            <div class="audit-meta"><span class="audit-time">1 hr ago</span><span
+                class="audit-user">priya@acme.com</span><a class="audit-diff">View diff →</a></div>
+          </div>
+        </div>
+        <div class="audit-item">
+          <div class="audit-dot mem"></div>
+          <div class="audit-content">
+            <div class="audit-action">Invited <b>alex@acme.com</b> to <b>Acme Corp</b> as Editor</div>
+            <div class="audit-meta"><span class="audit-time">3 hr ago</span><span
+                class="audit-user">admin@acme.com</span></div>
+          </div>
+        </div>
+        <div class="audit-item">
+          <div class="audit-dot draft"></div>
+          <div class="audit-content">
+            <div class="audit-action">Rolled back <b>summarization</b> from v5 → v3 after regression detected</div>
+            <div class="audit-meta"><span class="audit-time">Yesterday</span><span
+                class="audit-user">marcus@acme.com</span><a class="audit-diff">View diff →</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-glow"></div>
+    <div class="container">
+      <div class="cta-card reveal">
+        <div class="cta-eyebrow">Transform trial and error into consistent success</div>
+        <h2 class="cta-title">Stop hoping.<br><span class="accent">Start building.</span></h2>
+        <p class="cta-sub">We turn informal experiments into structured assets. Stop hoping for a better result — start
+          building one.</p>
+        <div class="cta-btns">
+          <a href="https://app.kloddy.com" class="btn-primary btn-lg">Create your first organization →</a>
+          <a href="javascript:void(0)" onclick="openModal()" class="btn-ghost btn-lg">See how it works</a>
+        </div>
+        <div class="cta-fine">No credit card required · Works for individuals &amp; teams · Free to start</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="footer-copy">© 2025 Kloddy. Master your AI, no matter who you are.</span>
+    <div class="footer-links"><a href="#">Docs</a><a href="#">Changelog</a><a href="#">Privacy</a><a href="#">Terms</a>
+    </div>
+  </footer>
+
+  <script>
+    const obs = new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+    }), { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    // Animate score bars when they scroll into view
+    const scoreObs = new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.score-bar-fill').forEach(bar => {
+          const w = bar.style.width; bar.style.width = '0';
+          setTimeout(() => { bar.style.width = w; }, 150);
+        });
+      }
+    }), { threshold: 0.3 });
+    document.querySelectorAll('.eval-card').forEach(el => scoreObs.observe(el));
+
+    // Background Video Ping-Pong Loop
+    const video = document.getElementById('hero-video');
+    let isRewinding = false;
+    const rewindSpeed = 0.05; // Adjust for smoother or faster rewind
+
+    // Listen for the end of the video or close to it
+    video.addEventListener('timeupdate', () => {
+      // Trigger rewind slightly before the end to avoid browser-specific "ended" stalls
+      if (!isRewinding && video.currentTime >= video.duration - 0.1) {
+        isRewinding = true;
+        video.pause();
+      }
+    });
+
+    // Manual rewind loop
+    function handlePingPong() {
+      if (isRewinding) {
+        if (video.currentTime > rewindSpeed) {
+          video.currentTime -= rewindSpeed;
+        } else {
+          video.currentTime = 0;
+          isRewinding = false;
+          video.play();
+        }
+      }
+      requestAnimationFrame(handlePingPong);
+    }
+
+    // Initialize ping-pong check
+    handlePingPong();
+
+  </script>
+
+  <!-- HOW IT WORKS MODAL -->
+  <div id="how-it-works-modal" class="modal-backdrop">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">×</button>
+
+      <div class="modal-header">How Kloddy Empowers Your AI Journey</div>
+      <div class="modal-sub">Welcome to your command center for AI excellence. Kloddy is designed to take the guesswork
+        out of your interactions, giving you total command over every result. Here is how we turn your vision into
+        consistent, high-quality success:</div>
+
+      <div class="modal-divider"></div>
+
+      <div class="modal-section">
+        <h3><span class="num">1.</span> Structure Your Vision</h3>
+        <p>Start by organizing your ideas into <strong>Organizations</strong> and <strong>Features</strong>. Whether it
+          is for your business, your classroom, or your home, this structure ensures your best prompts are always
+          exactly where you need them—never lost in a messy chat history again.</p>
+      </div>
+
+      <div class="modal-section">
+        <h3><span class="num">2.</span> Craft with Precision</h3>
+        <p>Use our advanced editor to build your prompts.</p>
+        <ul>
+          <li><strong>Dynamic Variables:</strong> Use <code>{{variable}}</code> to create one prompt that handles many
+            different situations.</li>
+          <li><strong>Version Control:</strong> Every save creates an immutable version. You can experiment freely,
+            knowing you can <strong>restore</strong> any previous version with a single click.</li>
+        </ul>
+      </div>
+
+      <div class="modal-section">
+        <h3><span class="num">3.</span> Bring in the "Judge"</h3>
+        <p>Don't settle for "maybe." Define exactly what a perfect answer looks like by setting <strong>Acceptance
+            Criteria</strong> and <strong>Critical Failure Conditions</strong>.</p>
+        <ul>
+          <li><strong>LLM-as-a-Judge:</strong> A high-level AI model will review the output against your specific rules.
+          </li>
+          <li><strong>Scoring:</strong> Get instant, objective grades on Accuracy, Completeness, Formatting, and Safety.
+          </li>
+        </ul>
+      </div>
+
+      <div class="modal-section">
+        <h3><span class="num">4.</span> Compare and Conquer</h3>
+        <p>Unsure which AI model is best for your task? Use <strong>Compare Models</strong> to run your prompt through
+          the world’s leading "brains" (GPT-4o, Claude, Gemini) side-by-side.</p>
+        <ul>
+          <li><strong>Side-by-Side Diffs:</strong> See exactly how text changes between versions.</li>
+          <li><strong>Automated Verdicts:</strong> Let the system crown a winner based on your data, not a guess.</li>
+        </ul>
+      </div>
+
+      <div class="modal-section">
+        <h3><span class="num">5.</span> Monitor and Grow</h3>
+        <p>Every execution provides deep insights.</p>
+        <ul>
+          <li><strong>Observability:</strong> Check the <strong>RAW Debug</strong> info to see the pure data behind the
+            response.</li>
+          <li><strong>Efficiency:</strong> Track the exact <strong>cost</strong> in cents and <strong>latency</strong>
+            in milliseconds for every prompt.</li>
+          <li><strong>Audit Trail:</strong> See a complete history of every change made by you or your team for total
+            accountability.</li>
+        </ul>
+      </div>
+
+      <div class="modal-divider"></div>
+
+      <div class="modal-footer-cta">
+        <strong>You provide the vision; Kloddy provides the mastery.</strong>
+        <a href="#" class="btn-primary btn-lg" onclick="closeModal()">Start Building Now →</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Modal Logic
+    const modal = document.getElementById('how-it-works-modal');
+
+    function openModal() {
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+
+    function closeModal() {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // Close on click outside
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) {
+        closeModal();
+      }
+    });
+  </script>
+</body>
+
+</html>
