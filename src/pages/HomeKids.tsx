@@ -9,7 +9,7 @@ export default function HomeKids() {
                     <span style={{ marginTop: '20px', display: 'block' }}>🧸</span>
                 </h1>
                 <p style={{ fontSize: '1.5rem', maxWidth: '600px', lineHeight: '1.5', margin: '0 auto 40px' }}>
-                    This is a magic toy box that remembers all the fun stories you create to play with your toys!
+                    This is a magic toy box that remembers all the <span title="Prompts" style={{ textDecoration: 'underline dotted', textUnderlineOffset: '4px', cursor: 'help' }}>fun stories</span> you create to play with <span title="AI tools" style={{ textDecoration: 'underline dotted', textUnderlineOffset: '4px', cursor: 'help' }}>your toys</span>!
                 </p>
 
                 <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '20px', maxWidth: '1000px', margin: '0 auto', width: '100%', padding: '0 20px' }}>
