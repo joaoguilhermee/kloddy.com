@@ -7,24 +7,30 @@ import HomeKids from './HomeKids';
 
 function Home() {
   const [modalOpen, setModalOpen] = useState(false);
+  const { isKidsMode } = useKidsMode();
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    const obs = new IntersectionObserver(es => es.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
-    }), { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
-    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    if (isKidsMode) return;
 
-    const scoreObs = new IntersectionObserver(es => es.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.querySelectorAll('.score-bar-fill').forEach(bar => {
-          const w = (bar as HTMLElement).style.width;
-          (bar as HTMLElement).style.width = '0';
-          setTimeout(() => { (bar as HTMLElement).style.width = w; }, 150);
-        });
-      }
-    }), { threshold: 0.3 });
-    document.querySelectorAll('.eval-card').forEach(el => scoreObs.observe(el));
+    // Use a small timeout to let the DOM reliably render adult classes first
+    const timer = setTimeout(() => {
+      const obs = new IntersectionObserver(es => es.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+      }), { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+      document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+      const scoreObs = new IntersectionObserver(es => es.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.querySelectorAll('.score-bar-fill').forEach(bar => {
+            const w = (bar as HTMLElement).style.width;
+            (bar as HTMLElement).style.width = '0';
+            setTimeout(() => { (bar as HTMLElement).style.width = w; }, 150);
+          });
+        }
+      }), { threshold: 0.3 });
+      document.querySelectorAll('.eval-card').forEach(el => scoreObs.observe(el));
+    }, 50);
 
     // Video Ping-Pong Logic
     let isRewinding = false;
@@ -58,10 +64,11 @@ function Home() {
     handlePingPong();
 
     return () => {
+      clearTimeout(timer);
       if (video) video.removeEventListener('timeupdate', handleTimeUpdate);
       cancelAnimationFrame(reqId);
     };
-  }, []);
+  }, [isKidsMode]);
 
   useEffect(() => {
     if (modalOpen) {
@@ -80,8 +87,6 @@ function Home() {
     document.addEventListener('keydown', handleKeydown);
     return () => document.removeEventListener('keydown', handleKeydown);
   }, [modalOpen]);
-
-  const { isKidsMode } = useKidsMode();
 
   if (isKidsMode) {
     return <HomeKids />;
