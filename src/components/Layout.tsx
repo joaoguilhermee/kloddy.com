@@ -27,7 +27,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 )}
                 <div className="nav-cta">
                     <button style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--surface)', color: 'var(--ink)', padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--border)', cursor: 'pointer', fontFamily: "'Rajdhani', sans-serif", fontWeight: '600' }} onClick={toggleKidsMode}>
-                        {isKidsMode ? 'Back to Adult Mode' : <><span>🧸</span><span>Page for a 5 year old</span></>}
+                        {isKidsMode ? 'Back to Adult Mode' : <><span>🧸</span><span className="pastel-rainbow-text">Page for a 5 year old</span></>}
                     </button>
                     <a href="https://app.kloddy.com" className="btn-primary">Get started free</a>
                 </div>
