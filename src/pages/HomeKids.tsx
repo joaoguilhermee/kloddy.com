@@ -3,12 +3,12 @@ import { Layout } from '../components/Layout';
 export default function HomeKids() {
     return (
         <Layout>
-            <section className="hero" style={{ textAlign: 'center', minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <section className="hero" style={{ textAlign: 'center', minHeight: 'calc(100vh - 120px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 <h1 style={{ fontSize: '4rem', marginBottom: '20px' }}>
                     Welcome to <span className="accent">Kloddy!</span> 🧸
                 </h1>
                 <p style={{ fontSize: '1.5rem', maxWidth: '600px', lineHeight: '1.5', margin: '0 auto 40px' }}>
-                    This is a magic place where we talk to computers!
+                    This is a magic place that remembers the stories and instructions you give to computers, helping you keep track of all your favorite prompts!
                 </p>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', maxWidth: '900px', margin: '0 auto' }}>

@@ -24,7 +24,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                     <li><Link to="/#governance">Governance</Link></li>
                 </ul>
                 <div className="nav-cta">
-                    <button style={{ background: isKidsMode ? 'var(--blue)' : 'var(--surface)', color: isKidsMode ? '#fff' : 'var(--ink)', padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--border)', cursor: 'pointer', fontFamily: "'Rajdhani', sans-serif", fontWeight: '600' }} onClick={toggleKidsMode}>
+                    <button style={{ background: 'var(--surface)', color: 'var(--ink)', padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--border)', cursor: 'pointer', fontFamily: "'Rajdhani', sans-serif", fontWeight: '600' }} onClick={toggleKidsMode}>
                         {isKidsMode ? 'Back to Adult Mode' : 'Page for a 5 year old'}
                     </button>
                     <a href="https://app.kloddy.com" className="btn-primary">Get started free</a>
