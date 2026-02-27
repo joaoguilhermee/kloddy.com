@@ -12,23 +12,35 @@ export default function HomeKids() {
                     This is a magic toy box that remembers all the fun stories you create to play with your toys!
                 </p>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', maxWidth: '900px', margin: '0 auto' }}>
-                    <div style={{ background: 'var(--surface)', padding: '30px', borderRadius: '16px', border: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '20px', maxWidth: '1000px', margin: '0 auto', width: '100%', padding: '0 20px' }}>
+                    <div style={{ flex: '1 1 280px', maxWidth: '300px', background: 'var(--surface)', padding: '30px', borderRadius: '16px', border: '1px solid var(--border)' }}>
                         <div style={{ fontSize: '3rem', marginBottom: '10px' }}>📦</div>
                         <h3 style={{ fontSize: '1.5rem', marginBottom: '10px', color: 'var(--ink)' }}>Save It!</h3>
                         <p style={{ color: 'var(--ink-muted)', fontSize: '1.1rem' }}>We put all your fun ideas in a safe toy box so you never lose them.</p>
                     </div>
 
-                    <div style={{ background: 'var(--surface)', padding: '30px', borderRadius: '16px', border: '1px solid var(--border)' }}>
+                    <div style={{ flex: '1 1 280px', maxWidth: '300px', background: 'var(--surface)', padding: '30px', borderRadius: '16px', border: '1px solid var(--border)' }}>
                         <div style={{ fontSize: '3rem', marginBottom: '10px' }}>🕰️</div>
                         <h3 style={{ fontSize: '1.5rem', marginBottom: '10px', color: 'var(--ink)' }}>Time Travel</h3>
                         <p style={{ color: 'var(--ink-muted)', fontSize: '1.1rem' }}>Change your mind? We have a magic button to go back to how things were!</p>
                     </div>
 
-                    <div style={{ background: 'var(--surface)', padding: '30px', borderRadius: '16px', border: '1px solid var(--border)' }}>
+                    <div style={{ flex: '1 1 280px', maxWidth: '300px', background: 'var(--surface)', padding: '30px', borderRadius: '16px', border: '1px solid var(--border)' }}>
                         <div style={{ fontSize: '3rem', marginBottom: '10px' }}>⭐</div>
                         <h3 style={{ fontSize: '1.5rem', marginBottom: '10px', color: 'var(--ink)' }}>Get Graded!</h3>
                         <p style={{ color: 'var(--ink-muted)', fontSize: '1.1rem' }}>We check if your toy did a good job and give it a shiny gold star!</p>
+                    </div>
+
+                    <div style={{ flex: '1 1 280px', maxWidth: '300px', background: 'var(--surface)', padding: '30px', borderRadius: '16px', border: '1px solid var(--border)' }}>
+                        <div style={{ fontSize: '3rem', marginBottom: '10px' }}>💌</div>
+                        <h3 style={{ fontSize: '1.5rem', marginBottom: '10px', color: 'var(--ink)' }}>Share Stories!</h3>
+                        <p style={{ color: 'var(--ink-muted)', fontSize: '1.1rem' }}>Share your wonderful stories with your friends and play together!</p>
+                    </div>
+
+                    <div style={{ flex: '1 1 280px', maxWidth: '300px', background: 'var(--surface)', padding: '30px', borderRadius: '16px', border: '1px solid var(--border)' }}>
+                        <div style={{ fontSize: '3rem', marginBottom: '10px' }}>🏰</div>
+                        <h3 style={{ fontSize: '1.5rem', marginBottom: '10px', color: 'var(--ink)' }}>Safe Place!</h3>
+                        <p style={{ color: 'var(--ink-muted)', fontSize: '1.1rem' }}>A super safe castle that keeps all your fun stories safe from any sneaky monsters! 👾</p>
                     </div>
                 </div>
             </section>

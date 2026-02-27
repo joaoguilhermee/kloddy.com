@@ -17,15 +17,17 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                     <img src="/kloddy-dark.png" alt="Kloddy" />
                     Kloddy
                 </Link>
-                <ul className="nav-links">
-                    <li><Link to="/#features">Features</Link></li>
-                    <li><Link to="/#eval">Evaluation</Link></li>
-                    <li><Link to="/#bench">Benchmarking</Link></li>
-                    <li><Link to="/#governance">Governance</Link></li>
-                </ul>
+                {!isKidsMode && (
+                    <ul className="nav-links">
+                        <li><Link to="/#features">Features</Link></li>
+                        <li><Link to="/#eval">Evaluation</Link></li>
+                        <li><Link to="/#bench">Benchmarking</Link></li>
+                        <li><Link to="/#governance">Governance</Link></li>
+                    </ul>
+                )}
                 <div className="nav-cta">
-                    <button style={{ background: 'var(--surface)', color: 'var(--ink)', padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--border)', cursor: 'pointer', fontFamily: "'Rajdhani', sans-serif", fontWeight: '600' }} onClick={toggleKidsMode}>
-                        {isKidsMode ? 'Back to Adult Mode' : 'Page for a 5 year old'}
+                    <button style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--surface)', color: 'var(--ink)', padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--border)', cursor: 'pointer', fontFamily: "'Rajdhani', sans-serif", fontWeight: '600' }} onClick={toggleKidsMode}>
+                        {isKidsMode ? 'Back to Adult Mode' : <><span>🧸</span><span>Page for a 5 year old</span></>}
                     </button>
                     <a href="https://app.kloddy.com" className="btn-primary">Get started free</a>
                 </div>
