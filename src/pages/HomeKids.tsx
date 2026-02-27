@@ -5,7 +5,8 @@ export default function HomeKids() {
         <Layout>
             <section className="hero" style={{ textAlign: 'center', minHeight: 'calc(100vh - 120px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 <h1 style={{ fontSize: '4rem', marginBottom: '20px' }}>
-                    Welcome to <span className="accent">Kloddy!</span> 🧸
+                    Welcome to <span className="accent">Kloddy!</span>
+                    <span style={{ marginTop: '20px', display: 'block' }}>🧸</span>
                 </h1>
                 <p style={{ fontSize: '1.5rem', maxWidth: '600px', lineHeight: '1.5', margin: '0 auto 40px' }}>
                     This is a magic toy box that remembers all the fun stories you create to play with your toys!
@@ -27,7 +28,7 @@ export default function HomeKids() {
                     <div style={{ background: 'var(--surface)', padding: '30px', borderRadius: '16px', border: '1px solid var(--border)' }}>
                         <div style={{ fontSize: '3rem', marginBottom: '10px' }}>⭐</div>
                         <h3 style={{ fontSize: '1.5rem', marginBottom: '10px', color: 'var(--ink)' }}>Get Graded!</h3>
-                        <p style={{ color: 'var(--ink-muted)', fontSize: '1.1rem' }}>We check if the computer did a good job and give it a shiny gold star!</p>
+                        <p style={{ color: 'var(--ink-muted)', fontSize: '1.1rem' }}>We check if your toy did a good job and give it a shiny gold star!</p>
                     </div>
                 </div>
             </section>
