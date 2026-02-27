@@ -8,7 +8,7 @@ export default function HomeKids() {
                     Welcome to <span className="accent">Kloddy!</span> 🧸
                 </h1>
                 <p style={{ fontSize: '1.5rem', maxWidth: '600px', lineHeight: '1.5', margin: '0 auto 40px' }}>
-                    This is a magic place that remembers the stories and instructions you give to computers, helping you keep track of all your favorite prompts!
+                    This is a magic toy box that remembers all the fun stories you create to play with your toys!
                 </p>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', maxWidth: '900px', margin: '0 auto' }}>
