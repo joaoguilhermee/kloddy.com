@@ -1,12 +1,15 @@
 import React from 'react';
+import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import { useKidsMode } from '../context/KidsModeContext';
 import '../index.css';
 
 interface LayoutProps {
-    children: React.ReactNode;
+    children: ReactNode;
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
+    const { isKidsMode, toggleKidsMode } = useKidsMode();
     return (
         <>
             <nav>
@@ -21,6 +24,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                     <li><Link to="/#governance">Governance</Link></li>
                 </ul>
                 <div className="nav-cta">
+                    <button style={{ background: isKidsMode ? 'var(--blue)' : 'var(--surface)', color: isKidsMode ? '#fff' : 'var(--ink)', padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--border)', cursor: 'pointer', fontFamily: "'Rajdhani', sans-serif", fontWeight: '600' }} onClick={toggleKidsMode}>
+                        {isKidsMode ? 'Back to Adult Mode' : 'Page for a 5 year old'}
+                    </button>
                     <a href="https://app.kloddy.com" className="btn-primary">Get started free</a>
                 </div>
             </nav>

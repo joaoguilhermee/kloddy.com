@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import '../index.css';
 
 import { Layout } from '../components/Layout';
+import { useKidsMode } from '../context/KidsModeContext';
+import HomeKids from './HomeKids';
 
 function Home() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -78,6 +80,12 @@ function Home() {
     document.addEventListener('keydown', handleKeydown);
     return () => document.removeEventListener('keydown', handleKeydown);
   }, [modalOpen]);
+
+  const { isKidsMode } = useKidsMode();
+
+  if (isKidsMode) {
+    return <HomeKids />;
+  }
 
   return (
     <Layout>
