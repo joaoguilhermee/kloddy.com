@@ -31,7 +31,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                             <>
                                 <span>🧸</span>
                                 <span className="pastel-rainbow-text desktop-text">Explain like I'm 5</span>
-                                <span className="pastel-rainbow-text mobile-text">Explain like I'm 5y</span>
+                                <span className="pastel-rainbow-text mobile-text">Explain like I'm 5</span>
                             </>
                         )}
                     </button>
