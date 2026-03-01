@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
-import { Layout } from '../components/Layout';
+"use client";
 
-export const Terms: React.FC = () => {
+import React, { useEffect } from 'react';
+import { Layout } from '../../components/Layout';
+
+export default function Terms() {
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);

@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
-import { Layout } from '../components/Layout';
+"use client";
 
-export const Privacy: React.FC = () => {
+import React, { useEffect } from 'react';
+import { Layout } from '../../components/Layout';
+
+export default function Privacy() {
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);

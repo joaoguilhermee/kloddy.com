@@ -1,5 +1,6 @@
+"use client";
+
 import { useState, useEffect, useRef } from 'react';
-import '../index.css';
 
 import { Layout } from '../components/Layout';
 import { useKidsMode } from '../context/KidsModeContext';

@@ -176,7 +176,7 @@ nav {
   content: '';
   position: absolute;
   inset: 0;
-  background: url('fallback.png') center/cover no-repeat;
+  background: url('/fallback.png') center/cover no-repeat;
   filter: grayscale(100%);
   z-index: -1;
 }

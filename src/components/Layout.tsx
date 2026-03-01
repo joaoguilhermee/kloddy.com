@@ -1,8 +1,9 @@
+"use client";
+
 import React from 'react';
 import type { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { useKidsMode } from '../context/KidsModeContext';
-import '../index.css';
 
 interface LayoutProps {
     children: ReactNode;
@@ -13,16 +14,16 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     return (
         <>
             <nav>
-                <Link to="/" className="logo">
+                <Link href="/" className="logo">
                     <img src="/kloddy-dark.png" alt="Kloddy" />
                     <span className="logo-text">Kloddy</span>
                 </Link>
                 {!isKidsMode && (
                     <ul className="nav-links">
-                        <li><Link to="/#features">Features</Link></li>
-                        <li><Link to="/#eval">Evaluation</Link></li>
-                        <li><Link to="/#bench">Benchmarking</Link></li>
-                        <li><Link to="/#governance">Governance</Link></li>
+                        <li><Link href="/#features">Features</Link></li>
+                        <li><Link href="/#eval">Evaluation</Link></li>
+                        <li><Link href="/#bench">Benchmarking</Link></li>
+                        <li><Link href="/#governance">Governance</Link></li>
                     </ul>
                 )}
                 <div className="nav-cta">
@@ -46,8 +47,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <div className="footer-links">
                     <a href="https://kloddy.tawk.help/">Docs</a>
                     <a href="https://kloddy.userjot.com/updates?cursor=1&limit=10">Changelog</a>
-                    <Link to="/privacy">Privacy</Link>
-                    <Link to="/terms">Terms</Link>
+                    <Link href="/privacy">Privacy</Link>
+                    <Link href="/terms">Terms</Link>
                 </div>
             </footer>
         </>
