@@ -44,8 +44,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             <footer>
                 <span className="footer-copy">© 2026 Kloddy. Master your AI, no matter who you are.</span>
                 <div className="footer-links">
-                    <a href="#">Docs</a>
-                    <a href="#">Changelog</a>
+                    <a href="https://kloddy.tawk.help/">Docs</a>
+                    <a href="https://kloddy.userjot.com/updates?cursor=1&limit=10">Changelog</a>
                     <Link to="/privacy">Privacy</Link>
                     <Link to="/terms">Terms</Link>
                 </div>

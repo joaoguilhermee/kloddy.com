@@ -548,7 +548,7 @@ function Home() {
 
           <div className="modal-footer-cta">
             <strong>You provide the vision; Kloddy provides the mastery.</strong>
-            <a href="#" className="btn-primary btn-lg" onClick={() => setModalOpen(true)}>Start Building Now →</a>
+            <a href="https://app.kloddy.com" className="btn-primary btn-lg" onClick={() => setModalOpen(true)}>Start Building Now →</a>
           </div>
         </div>
       </div>
